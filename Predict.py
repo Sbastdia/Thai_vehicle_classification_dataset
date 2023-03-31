@@ -7,11 +7,11 @@ Original file is located at
     https://colab.research.google.com/drive/1tTZ05M2T1d7Z4qDdw_58rEunfeBoceR7
 """
 
-!unzip /content/drive/MyDrive/PracticaCoches.zip
+""" !unzip /content/drive/MyDrive/PracticaCoches.zip """
 
-!unzip /content/drive/MyDrive/Mooc-aii.zip
+""" !unzip /content/drive/MyDrive/Mooc-aii.zip """
 
-!pip install pymongo
+""" !pip install pymongo """
 
 import glob
 import cv2

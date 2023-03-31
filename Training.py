@@ -7,9 +7,9 @@ Original file is located at
     https://colab.research.google.com/drive/1IfBZIoS2Bb5cGDvRnT69c4jtJDtI_daM
 """
 
-!unzip /content/drive/MyDrive/PracticaCoches.zip
+""" !unzip /content/drive/MyDrive/PracticaCoches.zip """
 
-!unzip /content/drive/MyDrive/Mooc-aii.zip
+""" !unzip /content/drive/MyDrive/Mooc-aii.zip """
 
 import os
 import random
@@ -94,7 +94,7 @@ class scratch_nn(nn.Module):
         self.linear2 = nn.Linear(1024,512)
         self.linear3 = nn.Linear(512,7)
         self.classifier = nn.Softmax(dim=1)
-        
+
     def forward(self,x):
         x = self.mpool( self.relu(self.conv1(x)) )
         x = self.mpool( self.relu(self.conv2(x)) )
@@ -134,7 +134,7 @@ def train_step(train_loader, model, optimizer, criterion, device):
         # store
         predictions.append(yhat)
         actuals.append(actual)
-    
+
     predictions, actuals = vstack(predictions), vstack(actuals)
     # calculate accuracy
     acc = accuracy_score(actuals, predictions)
