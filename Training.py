@@ -68,7 +68,7 @@ random.shuffle(images_paths1)
 val_dir = '/content/PracticaCoches/valid/images/'
 images_paths2 = os.listdir(val_dir)
 train_dataset = ThaiVehiclesDataset(train_dir, images_paths1, transform = data_transform)
-val_dataset = ThaiVehiclesDataset(train_dir, images_paths2, transform = data_transform)
+val_dataset = ThaiVehiclesDataset(val_dir, images_paths2, transform = data_transform)
 train_dataloader = DataLoader(train_dataset, batch_size = 64, shuffle=True)
 val_dataloader = DataLoader(val_dataset, batch_size = 64, shuffle=False)
 
@@ -94,7 +94,7 @@ class scratch_nn(nn.Module):
         self.linear2 = nn.Linear(1024,512)
         self.linear3 = nn.Linear(512,7)
         self.classifier = nn.Softmax(dim=1)
-
+        
     def forward(self,x):
         x = self.mpool( self.relu(self.conv1(x)) )
         x = self.mpool( self.relu(self.conv2(x)) )
@@ -134,7 +134,7 @@ def train_step(train_loader, model, optimizer, criterion, device):
         # store
         predictions.append(yhat)
         actuals.append(actual)
-
+    
     predictions, actuals = vstack(predictions), vstack(actuals)
     # calculate accuracy
     acc = accuracy_score(actuals, predictions)
