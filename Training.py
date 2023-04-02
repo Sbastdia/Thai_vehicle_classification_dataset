@@ -9,10 +9,9 @@ Original file is located at
 
 """ !unzip /content/drive/MyDrive/PracticaCoches.zip """
 
-""" !unzip /content/drive/MyDrive/Mooc-aii.zip """
-
 import os
 import random
+from PIL import Image
 
 import cv2
 import matplotlib.pyplot as plt
@@ -32,22 +31,15 @@ class ThaiVehiclesDataset(Dataset):
         self.train_dir = train_dir
         self.transform = transform
         self.images = img_list
-        
+
     def __len__(self):
         return len(self.images)
-    
+
     def __getitem__(self, index):
         image_path = os.path.join(self.train_dir, self.images[index])
-        path1= '/content/PracticaCoches/train/labels'
-        path2= '/content/PracticaCoches/valid/labels'
-        label_path = os.path.join(path1, path2)
-        for filename in os.listdir(label_path):
-          if filename.endswith('.txt'):  # Solo leer archivos de texto
-            with open(os.path.join(label_path, filename), 'r') as f:
-              primeraLinea = f.readline().strip()  # eliminamos el carácter de salto de línea al final
-              label = int(primeraLinea.split()[0])  # extraemos el primer número que es el que necesitamos para clasificar cada foto
-              break  # salimos del loop después de leer el primer archivo
-        img = cv2.imread(image_path)
+        label_path=image_path.replace('images','labels').replace(".jpg",".txt")
+        label=int(open(label_path,'r').read()[0])
+        img = np.array(Image.open(image_path))
         if self.transform:
             img = self.transform(img)
         return img, torch.tensor(label)
@@ -94,7 +86,7 @@ class scratch_nn(nn.Module):
         self.linear2 = nn.Linear(1024,512)
         self.linear3 = nn.Linear(512,7)
         self.classifier = nn.Softmax(dim=1)
-        
+
     def forward(self,x):
         x = self.mpool( self.relu(self.conv1(x)) )
         x = self.mpool( self.relu(self.conv2(x)) )
@@ -134,7 +126,7 @@ def train_step(train_loader, model, optimizer, criterion, device):
         # store
         predictions.append(yhat)
         actuals.append(actual)
-    
+
     predictions, actuals = vstack(predictions), vstack(actuals)
     # calculate accuracy
     acc = accuracy_score(actuals, predictions)
@@ -175,11 +167,11 @@ def train(model, train_dataloader, val_dataloader, optimizer, criterion, device)
         train_loss, train_acc = train_step(train_dataloader, model, optimizer, criterion, device)
         train_loss_list.append(train_loss)
         train_acc_list.append(train_acc*100)
-        print(f"Train: Loss at epoch {epoch} is {train_loss} and accuracy is {train_acc}%")
+        print(f"Train: Loss at epoch {epoch} is {train_loss} and accuracy is {train_acc*100}%")
         val_loss, val_acc = evaluation_step(val_dataloader, model, criterion, device)
         val_loss_list.append(val_loss)
         val_acc_list.append(val_acc*100)
-        print(f"Validation: Loss at epoch {epoch} is {val_loss} and accuracy is {val_acc}%")
+        print(f"Validation: Loss at epoch {epoch} is {val_loss} and accuracy is {val_acc*100}%")
         torch.save(model.state_dict(), model_file_name)
     return model, train_loss_list, train_acc_list, val_loss_list, val_acc_list
 
